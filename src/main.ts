@@ -9,14 +9,24 @@ import "./style.css";
  */
 const loadingManager = new THREE.LoadingManager();
 loadingManager.onLoad = () => {
-  gsap.to(overlay.material.uniforms.uAlpha, {
-    duration: 3,
-    value: 0,
-  });
+  window.setTimeout(() => {
+    gsap.to(overlay.material.uniforms.uAlpha, {
+      duration: 3,
+      value: 0,
+    });
+    if (loadingBar) {
+      loadingBar.classList.add("ended");
+      loadingBar.style.transform = "";
+    }
+  }, 500);
 };
+const loadingBar = document.querySelector<HTMLDivElement>(".loading-bar");
 loadingManager.onProgress = (item, loaded, total) => {
   console.log(item, loaded, total);
-  // overlay.material.uniforms.uAlpha.value = loaded / total;
+  const progressRatio = loaded / total;
+  if (loadingBar) {
+    loadingBar.style.transform = `scaleX(${progressRatio})`;
+  }
 };
 const gltfLoader = new GLTFLoader(loadingManager);
 const cubeTextureLoader = new THREE.CubeTextureLoader(loadingManager);
